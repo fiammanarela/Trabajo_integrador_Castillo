@@ -128,4 +128,36 @@ Resultado final:
     return texto
 
 
+# RSA
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+
+def mod_inverse(e, phi):
+    for d in range(3, phi):
+        if (e * d) % phi == 1:
+            return d
+    return None
+
+
+def rsa_generate_keys():
+    p = 17
+    q = 11
+    n = p * q
+    phi = (p - 1) * (q - 1)
+    e = 7
+    d = mod_inverse(e, phi)
+    return (e, n), (d, n)
+
+
+def rsa_encrypt(text, public_key):
+    e, n = public_key
+    return [pow(ord(char), e, n) for char in text]
+
+
+def rsa_decrypt(cipher, private_key):
+    d, n = private_key
+    return ''.join(chr(pow(char, d, n)) for char in cipher)
 
