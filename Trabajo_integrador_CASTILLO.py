@@ -161,3 +161,94 @@ def rsa_decrypt(cipher, private_key):
     d, n = private_key
     return ''.join(chr(pow(char, d, n)) for char in cipher)
 
+# INTERFAZ
+
+def process_text():
+    algorithm = combo_algo.get()
+    text = textbox_input.get("1.0", "end").strip()
+    key = entry_key.get().strip()
+    decrypt = switch_var.get()
+
+    if not text and algorithm not in ["Diffie-Hellman", "RSA"]:
+        messagebox.showerror("Error", "Debe ingresar un texto.")
+        return
+
+    try:
+        if algorithm == "Cifrado XOR":
+            if not key:
+                messagebox.showerror("Error", "Debe ingresar una clave.")
+                return
+            result = xor_cifrado(text, key)
+
+        elif algorithm == "Cifrado César":
+            result = cesar_cifrado(text, key, decrypt)
+
+        elif algorithm == "Cifrado Vigenere":
+            result = vigenere_cifrado(text, key, decrypt)
+
+        elif algorithm == "Cifrado Playfair":
+            result = playfair_cifrado(text, key, decrypt)
+
+        elif algorithm == "Diffie-Hellman":
+            result = diffie_hellman(23, 5, 6, 15)
+
+        elif algorithm == "RSA":
+            public, private = rsa_generate_keys()
+            if decrypt:
+                cipher_nums = [int(x) for x in text.split()]
+                result = rsa_decrypt(cipher_nums, private)
+            else:
+                cipher = rsa_encrypt(text, public)
+                result = ' '.join(map(str, cipher))
+
+        else:
+            result = "Algoritmo no reconocido."
+
+        textbox_output.delete("1.0", "end")
+        textbox_output.insert("end", result)
+
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+
+
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
+app = ctk.CTk()
+app.title("🔐 App de Cifrados - Versión Mejorada")
+app.geometry("750x680")
+
+ctk.CTkLabel(app, text="Aplicación de Cifrados", font=("Arial Rounded MT Bold", 24)).pack(pady=10)
+
+frame_top = ctk.CTkFrame(app)
+frame_top.pack(pady=10)
+
+ctk.CTkLabel(frame_top, text="Seleccione algoritmo:", font=("Arial", 16)).pack(side="left", padx=10)
+combo_algo = ctk.CTkComboBox(frame_top, values=[
+    "Cifrado XOR", "Cifrado César", "Cifrado Vigenere",
+    "Cifrado Playfair", "Diffie-Hellman", "RSA"
+])
+combo_algo.set("Cifrado XOR")
+combo_algo.pack(side="left", padx=10)
+
+ctk.CTkLabel(app, text="Texto:", font=("Arial", 14)).pack()
+textbox_input = ctk.CTkTextbox(app, height=100, width=650)
+textbox_input.pack(pady=5)
+
+ctk.CTkLabel(app, text="Clave (si aplica):", font=("Arial", 14)).pack()
+entry_key = ctk.CTkEntry(app, width=400, placeholder_text="Ingrese la clave aquí")
+entry_key.pack(pady=5)
+
+switch_var = ctk.BooleanVar()
+ctk.CTkSwitch(app, text="Descifrar", variable=switch_var, onvalue=True, offvalue=False).pack(pady=5)
+
+ctk.CTkButton(app, text="Procesar", command=process_text, width=200, height=40, corner_radius=12, fg_color="#0078D7").pack(pady=15)
+
+ctk.CTkLabel(app, text="Resultado:", font=("Arial", 14)).pack()
+textbox_output = ctk.CTkTextbox(app, height=180, width=650)
+textbox_output.pack(pady=5)
+
+ctk.CTkLabel(app, text="Castillo Rossi Fiamma", font=("Arial", 12)).pack(pady=10)
+
+app.mainloop()
