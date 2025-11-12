@@ -23,6 +23,25 @@ def cesar_cifrado(texto, key, decrypt=False):
             result += char
     return result
 
+# CIFRADO VIGENERE
+def vigenere_cifrado(texto, key, decrypt=False):
+    resultado = ''
+    if not key.isalpha():
+        return "La clave debe contener solo letras"
+    key = key.lower()
+    key_index = 0
+    for char in texto:
+        if char.isalpha():
+            shift = ord(key[key_index % len(key)]) - ord('a')
+            if decrypt:
+                shift = -shift
+            base = ord('A') if char.isupper() else ord('a')
+            resultado += chr((ord(char) - base + shift) % 26 + base)
+            key_index += 1
+        else:
+            resultado += char
+    return resultado
+
 
 
 
