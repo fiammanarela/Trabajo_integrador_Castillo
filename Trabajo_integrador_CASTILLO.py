@@ -96,5 +96,36 @@ def playfair_cifrado(text, key, decrypt=False):
 
     return result
 
+# DIFFIE-HELLMAN 
+
+def diffie_hellman(p=23, g=5, a=6, b=15):
+    A = pow(g, a, p)
+    B = pow(g, b, p)
+    shared_A = pow(B, a, p)
+    shared_B = pow(A, b, p)
+
+    texto = f""" Intercambio Diffie-Hellman
+
+Valores públicos:
+  p (primo) = {p}
+  g (base) = {g}
+
+Claves privadas:
+  a (Alice) = {a}
+  b (Bob) = {b}
+
+Claves públicas generadas:
+  A = g^a mod p = {A}
+  B = g^b mod p = {B}
+
+Cálculo de clave compartida:
+  Alice: (B^a mod p) = {shared_A}
+  Bob:   (A^b mod p) = {shared_B}
+
+Resultado final:
+  Clave compartida = {shared_A}
+"""
+    return texto
+
 
 
